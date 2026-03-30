@@ -159,7 +159,7 @@ const Sidebar = () => {
     };
 
     const categories = [
-        { id: 'Tumu', label: 'Tum Urunler', count: 12 },
+        { id: 'Tümü', label: 'Tum Urunler', count: 12 },
         { id: 'Spor_TRICK2', label: 'Spor Ekipmanlari', count: 4 }, // DARK PATTERN
         { id: 'Ayakkabi', label: 'Ayakkabi', count: 4 },
         { id: 'Giyim', label: 'Giyim', count: 2 },

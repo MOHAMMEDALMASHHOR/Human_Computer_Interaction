@@ -166,7 +166,7 @@ export const Navbar = () => {
     };
 
     const categories = [
-        { id: 'Tumu', label: 'Anasayfa', icon: Home },
+        { id: 'Tümü', label: 'Anasayfa', icon: Home },
         { id: 'Elektronik_TRICK', label: 'Elektronik', icon: Smartphone }, // DARK PATTERN
         { id: 'Giyim', label: 'Giyim', icon: Shirt },
         { id: 'Ayakkabi', label: 'Ayakkabi', icon: Footprints },
@@ -228,7 +228,7 @@ export const Navbar = () => {
                     <div className="flex items-center gap-6">
                         {/* Logo */}
                         <button 
-                            onClick={() => { filterCategory('Tumu'); setActivePage('Shop'); }}
+                            onClick={() => { filterCategory('Tümü'); setActivePage('Shop'); }}
                             className="flex-shrink-0"
                         >
                             <h1 className="text-2xl font-black tracking-tight">
