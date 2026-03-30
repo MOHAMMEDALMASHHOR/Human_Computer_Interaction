@@ -1,5 +1,35 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '../context/AppContext';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import {
+  X,
+  ShoppingCart,
+  Trash2,
+  Package,
+  Truck,
+  CreditCard,
+  Shield,
+  Lock,
+  Check,
+  ChevronRight,
+  AlertTriangle,
+  Star,
+  Clock,
+  Eye,
+  Heart,
+  Sparkles,
+  Gift,
+  Zap,
+  CheckCircle2,
+  MapPin,
+  Phone,
+  User
+} from 'lucide-react';
 
 export const ModalsContainer = () => {
     return (
@@ -16,47 +46,134 @@ const CartMenu = () => {
     const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
 
     const handleCheckout = () => {
-        logAction('Sepette Ödemeye Geç Butonuna Tıklandı');
-        if (cart.length === 0) { showToast('Sepetiniz boş!'); return; }
+        logAction('Sepette Odemeye Gec Butonuna Tiklandi');
+        if (cart.length === 0) { showToast('Sepetiniz bos!'); return; }
         setIsCartOpen(false);
         setIsCheckoutOpen(true);
     };
 
     return (
-        <>
-            {isCartOpen && <div id="cartOverlay" onClick={() => setIsCartOpen(false)}></div>}
-            <div id="cartPanel" className={isCartOpen ? 'open' : ''}>
-                <div className="cart-header">
-                    <h3>🛒 Sepetim</h3>
-                    <button className="cart-close" onClick={() => { setIsCartOpen(false); logAction('Sepet Kapatıldı'); }}>✕</button>
-                </div>
-                <div className="cart-items">
-                    {cart.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '40px', color: '#aaa' }}>
-                            <div style={{ fontSize: '48px', marginBottom: '15px' }}>🛒</div><p>Sepetiniz şu an boş.</p>
-                        </div>
-                    ) : (
-                        cart.map(item => (
-                            <div key={item.id} className="cart-item">
-                                <div className="cart-item-emoji">{item.emoji}</div>
-                                <div className="cart-item-info">
-                                    <div className="cart-item-name">{item.name}</div>
-                                    <div className="cart-item-price">₺{(item.price * item.qty).toLocaleString('tr-TR')} {item.qty > 1 ? `(${item.qty}x)` : ''}</div>
-                                    {item.packageNote && <div className="cart-item-note">📦 {item.packageNote}</div>}
-                                </div>
-                                <button className="cart-item-remove" onClick={() => removeFromCart(item.id)}>🗑️</button>
+        <AnimatePresence>
+            {isCartOpen && (
+                <>
+                    {/* Overlay */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setIsCartOpen(false)}
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[500]"
+                    />
+                    
+                    {/* Cart Panel */}
+                    <motion.div
+                        initial={{ x: '100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '100%' }}
+                        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                        className="fixed top-0 right-0 w-full max-w-md h-full bg-white z-[501] shadow-2xl flex flex-col"
+                    >
+                        {/* Header */}
+                        <div className="flex items-center justify-between px-6 py-4 bg-dark-secondary text-white">
+                            <div className="flex items-center gap-3">
+                                <ShoppingCart className="w-5 h-5" />
+                                <h3 className="text-lg font-bold">Sepetim</h3>
+                                <Badge variant="secondary" className="bg-white/20 text-white">
+                                    {cart.reduce((s, i) => s + i.qty, 0)}
+                                </Badge>
                             </div>
-                        ))
-                    )}
-                </div>
-                <div className="cart-footer">
-                    <div className="cart-subtotal-row"><span>Ara Toplam</span><span>₺{(subtotal).toLocaleString('tr-TR')}</span></div>
-                    <div className="cart-subtotal-row"><span>Kargo</span><span style={{ color: 'var(--green)' }}>Ücretsiz</span></div>
-                    <div className="cart-subtotal-row total"><span>Toplam Tutar</span><span>₺{(subtotal).toLocaleString('tr-TR')}</span></div>
-                    <button className="cart-checkout-btn" onClick={handleCheckout}>Güvenli Ödeme →</button>
-                </div>
-            </div>
-        </>
+                            <button
+                                onClick={() => { setIsCartOpen(false); logAction('Sepet Kapatildi'); }}
+                                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        {/* Items */}
+                        <div className="flex-1 overflow-y-auto p-4">
+                            {cart.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center h-full text-center">
+                                    <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                                        <ShoppingCart className="w-10 h-10 text-gray-300" />
+                                    </div>
+                                    <h4 className="text-lg font-semibold text-gray-900 mb-2">Sepetiniz bos</h4>
+                                    <p className="text-sm text-gray-500">Hemen alisverise baslayin!</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    {cart.map((item) => (
+                                        <motion.div
+                                            key={item.id}
+                                            layout
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, x: -100 }}
+                                            className="flex gap-4 p-3 bg-gray-50 rounded-xl"
+                                        >
+                                            <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center text-3xl shadow-sm">
+                                                {item.emoji}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="text-sm font-semibold text-gray-900 truncate">{item.name}</h4>
+                                                <p className="text-lg font-bold text-primary">
+                                                    {(item.price * item.qty).toLocaleString('tr-TR')} TL
+                                                    {item.qty > 1 && <span className="text-xs text-gray-500 ml-1">({item.qty}x)</span>}
+                                                </p>
+                                                {item.packageNote && (
+                                                    <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                                                        <Package className="w-3 h-3" />
+                                                        {item.packageNote}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <button
+                                                onClick={() => removeFromCart(item.id)}
+                                                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Footer */}
+                        <div className="border-t bg-white p-4 space-y-3">
+                            <div className="flex justify-between text-sm text-gray-600">
+                                <span>Ara Toplam</span>
+                                <span>{subtotal.toLocaleString('tr-TR')} TL</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-600">Kargo</span>
+                                <span className="text-green-600 font-semibold flex items-center gap-1">
+                                    <Truck className="w-4 h-4" />
+                                    Ucretsiz
+                                </span>
+                            </div>
+                            <div className="flex justify-between text-lg font-bold pt-3 border-t">
+                                <span>Toplam Tutar</span>
+                                <span className="text-primary">{subtotal.toLocaleString('tr-TR')} TL</span>
+                            </div>
+                            <Button 
+                                onClick={handleCheckout}
+                                className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-bold shadow-glow-primary"
+                                size="lg"
+                            >
+                                <Lock className="w-4 h-4 mr-2" />
+                                Guvenli Odeme
+                                <ChevronRight className="w-4 h-4 ml-2" />
+                            </Button>
+                            <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
+                                <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> 256-bit SSL</span>
+                                <span className="flex items-center gap-1"><CreditCard className="w-3 h-3" /> 3D Secure</span>
+                            </div>
+                        </div>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
     );
 };
 
@@ -74,7 +191,7 @@ const CheckoutModal = () => {
     useEffect(() => {
         if (isCheckoutOpen) {
             setStep(1);
-            logAction('Ödeme İşlemi Başlatıldı (Adım 1: Adres)');
+            logAction('Odeme Islemi Baslatildi (Adim 1: Adres)');
         }
     }, [isCheckoutOpen, logAction]);
 
@@ -87,7 +204,7 @@ const CheckoutModal = () => {
     const finalTotal = subtotal + extTotal + serviceFee + insuranceFee;
 
     const handleExtra = (key) => {
-        logAction(`Ekstra Servis Değiştirildi: ${key}`);
+        logAction(`Ekstra Servis Degistirildi: ${key}`);
         setExtras(prev => ({ ...prev, [key]: !prev[key] }));
     };
 
@@ -95,150 +212,397 @@ const CheckoutModal = () => {
         e.preventDefault();
         const rawCC = ccNum.replace(/\s/g, '');
         if (rawCC.length < 16 || ccCvv.length < 3) {
-            logAction('Kredi Kartı Ödemesi Form Hatası', true);
-            alert("Lütfen geçerli bir kart bilgisi giriniz.");
+            logAction('Kredi Karti Odemesi Form Hatasi', true);
+            alert("Lutfen gecerli bir kart bilgisi giriniz.");
             return;
         }
         completeOrder();
     };
 
     const completeOrder = () => {
-        logAction(`Sipariş Tamamlandı - Toplam Ödenen: ${finalTotal.toFixed(2)} TL`);
+        logAction(`Siparis Tamamlandi - Toplam Odenen: ${finalTotal.toFixed(2)} TL`);
         clearCart();
         setStep(4);
     };
 
-    const stepsStr = [0, 1, 2].map(i => (
-        <div key={i} className={`step-dot ${i + 1 < step ? 'done' : ''} ${i + 1 === step ? 'active' : ''}`}></div>
-    ));
+    const steps = [
+        { num: 1, label: 'Adres', icon: MapPin },
+        { num: 2, label: 'Hizmetler', icon: Gift },
+        { num: 3, label: 'Odeme', icon: CreditCard },
+    ];
 
     return (
-        <div className="modal-bg" onClick={(e) => {
-            if (e.target === e.currentTarget && step !== 4) { setIsCheckoutOpen(false); logAction('Ödeme Penceresi Dışarı Tıklanarak Kapatıldı', true); }
-        }}>
-            <div className="modal-box" style={{ maxWidth: '600px' }}>
-                {step === 1 && (
-                    <form className="checkout-step" onSubmit={(e) => { e.preventDefault(); setStep(2); logAction('Adım 2: Ek Hizmetlere Geçildi'); }}>
-                        <div className="step-indicator">{stepsStr}</div>
-                        <h3 style={{ fontFamily: 'Nunito', fontSize: '24px', marginBottom: '20px' }}>📦 Teslimat Bilgileriniz</h3>
-
-                        <div className="form-group"><label>Ad Soyad</label><input type="text" defaultValue={user?.name || ''} placeholder="Gönderilecek Kişi Adı" /></div>
-                        <div className="form-group"><label>Telefon Numarası</label><input type="tel" placeholder="05XX XXX XX XX" /></div>
-                        <div className="form-group"><label>Açık Adresiniz</label><input type="text" placeholder="İl, İlçe, Mahalle, Sokak, Kapı No" /></div>
-
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                            <button type="submit" className="checkout-next-btn" style={{ flex: 2 }}>Devam Et →</button>
-                            <button type="button" className="checkout-back-btn" style={{ flex: 1 }} onClick={() => setIsCheckoutOpen(false)}>İptal</button>
+        <AnimatePresence>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={(e) => {
+                    if (e.target === e.currentTarget && step !== 4) { 
+                        setIsCheckoutOpen(false); 
+                        logAction('Odeme Penceresi Disari Tiklanarak Kapatildi', true); 
+                    }
+                }}
+                className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[600] flex items-center justify-center p-4"
+            >
+                <motion.div
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.95, opacity: 0 }}
+                    className="w-full max-w-xl bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+                >
+                    {step < 4 && (
+                        <div className="bg-gradient-to-r from-dark-secondary to-dark p-6">
+                            <div className="flex items-center justify-between mb-6">
+                                {steps.map((s, idx) => {
+                                    const Icon = s.icon;
+                                    return (
+                                        <React.Fragment key={s.num}>
+                                            <div className={`flex flex-col items-center ${step >= s.num ? 'text-white' : 'text-white/40'}`}>
+                                                <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-all ${
+                                                    step > s.num ? 'bg-green-500' : step === s.num ? 'bg-primary' : 'bg-white/10'
+                                                }`}>
+                                                    {step > s.num ? <Check className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
+                                                </div>
+                                                <span className="text-xs font-medium">{s.label}</span>
+                                            </div>
+                                            {idx < steps.length - 1 && (
+                                                <div className={`flex-1 h-0.5 mx-2 ${step > s.num ? 'bg-green-500' : 'bg-white/10'}`} />
+                                            )}
+                                        </React.Fragment>
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </form>
-                )}
+                    )}
 
-                {step === 2 && (
-                    <div className="checkout-step">
-                        <div className="step-indicator">{stepsStr}</div>
-                        <h3 style={{ fontFamily: 'Nunito', fontSize: '24px', marginBottom: '15px' }}>🎁 Size Özel Fırsatlar</h3>
-                        <p style={{ fontSize: '13px', color: 'var(--mid)', marginBottom: '20px' }}>Alışverişinizi güvence altına alıp, yarına kapınıza getirmemiz için özel hizmetler sizin adınıza tanımlandı!</p>
+                    {step === 1 && (
+                        <form className="p-6" onSubmit={(e) => { e.preventDefault(); setStep(2); logAction('Adim 2: Ek Hizmetlere Gecildi'); }}>
+                            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                                <Package className="w-5 h-5 text-primary" />
+                                Teslimat Bilgileriniz
+                            </h3>
 
-                        <div className="extras-box">
-                            <div className="extra-item" style={{ background: extras.warranty ? '#fff8e1' : '#fff' }}>
-                                <label style={{ fontWeight: 'bold' }}><input type="checkbox" checked={extras.warranty} onChange={() => handleExtra('warranty')} /> 🛡️ 3 Yıl Genişletilmiş Ekstra Garanti Maksimizasyonu</label>
-                                <span className="extra-price">+₺149</span>
-                            </div>
-                            <div className="extra-item" style={{ background: extras.fast ? '#fff8e1' : '#fff' }}>
-                                <label style={{ fontWeight: 'bold' }}><input type="checkbox" checked={extras.fast} onChange={() => handleExtra('fast')} /> ⚡ SuperExpress Jet Teslimat (Yarın Elinizde)</label>
-                                <span className="extra-price">+₺39</span>
-                            </div>
-                            <div className="extra-item" style={{ background: extras.pack ? '#fff8e1' : '#fff' }}>
-                                <label style={{ fontWeight: 'bold' }}><input type="checkbox" checked={extras.pack} onChange={() => handleExtra('pack')} /> 📦 Lüks Jüt Kumaş Hediye Paketi</label>
-                                <span className="extra-price">+₺25</span>
-                            </div>
-                        </div>
-
-                        <div className="checkout-total-box">
-                            <div className="checkout-total-row"><span>Sepetteki Ürünler</span><span>₺{subtotal.toLocaleString('tr-TR')}</span></div>
-                            <div className="checkout-total-row added" style={{ color: 'var(--orange)' }}><span>Özel Hizmet Paketleri</span><span>+ ₺{extTotal}</span></div>
-                            <div className="checkout-total-row grand"><span>Sepet Tutarı</span><span>₺{(subtotal + extTotal).toLocaleString('tr-TR')}</span></div>
-                        </div>
-
-                        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                            <button className="checkout-next-btn" style={{ flex: 3, background: 'var(--dark)' }} onClick={() => { setStep(3); logAction('Adım 3: Kart Ödemesine Geçildi'); }}>Kart Bilgilerini Gir →</button>
-                            <button className="checkout-back-btn" style={{ flex: 1 }} onClick={() => setStep(1)}>Geri Dön</button>
-                        </div>
-                    </div>
-                )}
-
-                {step === 3 && (
-                    <form className="checkout-step" onSubmit={handleCreditCardSubmit}>
-                        <div className="step-indicator">{stepsStr}</div>
-                        <h3 style={{ fontFamily: 'Nunito', fontSize: '24px', marginBottom: '20px' }}>💳 Güvenli Ödeme</h3>
-
-                        {/* The sunk cost inputs -> get user to type CC details first before they notice the fee */}
-                        <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '12px', marginBottom: '20px', border: '1px solid #e0e0e0' }}>
-                            <div className="form-group" style={{ marginBottom: '12px' }}>
-                                <label style={{ fontSize: '12px', fontWeight: 'bold', display: 'block', marginBottom: '5px' }}>Kart Üzerindeki İsim</label>
-                                <input type="text" value={ccName} onChange={e => setCcName(e.target.value)} placeholder="ÖRNEK KİŞİ" style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '6px', textTransform: 'uppercase' }} />
-                            </div>
-
-                            <div className="form-group" style={{ marginBottom: '12px' }}>
-                                <label style={{ fontSize: '12px', fontWeight: 'bold', display: 'block', marginBottom: '5px' }}>Kart Numarası</label>
-                                <input type="text" value={ccNum} onChange={e => {
-                                    const val = e.target.value.replace(/\D/g, '');
-                                    const formatted = val.match(/.{1,4}/g)?.join(' ') || '';
-                                    setCcNum(formatted);
-                                }} placeholder="XXXX XXXX XXXX XXXX" maxLength={19} pattern="[\d\s]{16,19}" title="16 Haneli Kart Numarası Girin" style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '6px' }} />
-                            </div>
-
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                <div className="form-group" style={{ flex: 1 }}>
-                                    <label style={{ fontSize: '12px', fontWeight: 'bold', display: 'block', marginBottom: '5px' }}>Son Kullanma</label>
-                                    <input type="text" value={ccExpiry} onChange={e => {
-                                        let val = e.target.value.replace(/\D/g, '');
-                                        if (val.length > 2) val = val.slice(0, 2) + '/' + val.slice(2, 4);
-                                        setCcExpiry(val);
-                                    }} placeholder="AA/YY" maxLength={5} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '6px' }} />
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Ad Soyad</label>
+                                    <div className="relative">
+                                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                        <Input 
+                                            type="text" 
+                                            defaultValue={user?.name || ''} 
+                                            placeholder="Gonderilecek Kisi Adi" 
+                                            className="pl-10"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="form-group" style={{ flex: 1 }}>
-                                    <label style={{ fontSize: '12px', fontWeight: 'bold', display: 'block', marginBottom: '5px' }}>CVV</label>
-                                    <input type="password" value={ccCvv} onChange={e => setCcCvv(e.target.value)} placeholder="123" maxLength={3} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '6px' }} />
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Telefon Numarasi</label>
+                                    <div className="relative">
+                                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                        <Input type="tel" placeholder="05XX XXX XX XX" className="pl-10" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Acik Adresiniz</label>
+                                    <div className="relative">
+                                        <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                                        <textarea 
+                                            placeholder="Il, Ilce, Mahalle, Sokak, Kapi No"
+                                            className="w-full min-h-[80px] pl-10 pr-4 py-2.5 border border-input rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* DARK PATTERN: Sneak fee warning placed RIGHT ABOVE the submit button exactly where they don't want to cancel */}
-                        <div className="hidden-fee-box" style={{ background: '#ffebee', color: 'var(--red)', padding: '15px', borderRadius: '8px', borderLeft: '5px solid var(--red)', marginBottom: '20px', fontSize: '13px', lineHeight: '1.5' }}>
-                            <strong>⚠️ SON DAKİKA ÖDEME UYARISI</strong><br />
-                            TrendSepet altyapısının güvenliği ve taşımacılık prosedürleri sebebiyle faturanıza şu an
-                            <strong> ₺{serviceFee.toFixed(2)} Sistem Operasyon Bedeli</strong> ve
-                            <strong> ₺{insuranceFee.toFixed(2)} Zorunlu Kargo Sigortası Primi</strong> yansıtılmıştır. Siparişi tamamlayarak bu kesintiyi onaylamış sayılırsınız.
-                        </div>
+                            <div className="flex gap-3 mt-6">
+                                <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90">
+                                    Devam Et
+                                    <ChevronRight className="w-4 h-4 ml-2" />
+                                </Button>
+                                <Button type="button" variant="outline" onClick={() => setIsCheckoutOpen(false)}>
+                                    Iptal
+                                </Button>
+                            </div>
+                        </form>
+                    )}
 
-                        <div className="checkout-total-box" style={{ marginBottom: '20px' }}>
-                            <div className="checkout-total-row"><span>Sepet + Ekstra Paketler</span><span>₺{(subtotal + extTotal).toLocaleString('tr-TR')}</span></div>
-                            <div className="checkout-total-row added" style={{ color: 'var(--red)' }}><span>Zorunlu Kesintiler</span><span>+ ₺{(serviceFee + insuranceFee).toFixed(2)}</span></div>
-                            <div className="checkout-total-row grand"><span>Kredi Kartından Çekilecek</span><span>₺{finalTotal.toFixed(2)}</span></div>
-                        </div>
+                    {step === 2 && (
+                        <div className="p-6">
+                            <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                                <Gift className="w-5 h-5 text-primary" />
+                                Size Ozel Firsatlar
+                            </h3>
+                            <p className="text-sm text-muted-foreground mb-6">
+                                Alisverisini guvence altina alip, yarina kapiniza getirmemiz icin ozel hizmetler sizin adiniza tanimlandi!
+                            </p>
 
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                            <button type="submit" className="checkout-next-btn" style={{ flex: 3, background: 'var(--green)', boxShadow: '0 4px 15px rgba(40,167,69,0.4)', color: '#fff', padding: '16px', fontSize: '18px' }}>🔒 SİPARİŞİ ONAYLA</button>
-                            <button type="button" className="checkout-back-btn" style={{ flex: 1 }} onClick={() => setStep(2)}>Vazgeç ve Geri</button>
-                        </div>
-                    </form>
-                )}
+                            <div className="space-y-3 mb-6">
+                                <div 
+                                    className={`p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                                        extras.warranty ? 'border-primary bg-primary/5' : 'border-gray-200 bg-white'
+                                    }`}
+                                    onClick={() => handleExtra('warranty')}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                                extras.warranty ? 'border-primary bg-primary' : 'border-gray-300'
+                                            }`}>
+                                                {extras.warranty && <Check className="w-3 h-3 text-white" />}
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold flex items-center gap-2">
+                                                    <Shield className="w-4 h-4 text-primary" />
+                                                    3 Yil Genisletilmis Ekstra Garanti
+                                                </p>
+                                                <p className="text-xs text-muted-foreground">Tum urunler icin kapsamli koruma</p>
+                                            </div>
+                                        </div>
+                                        <Badge variant="secondary" className="font-bold">+149 TL</Badge>
+                                    </div>
+                                </div>
 
-                {step === 4 && (
-                    <div className="success-box" style={{ textAlign: 'center', padding: '40px 20px' }}>
-                        <div style={{ fontSize: '80px', marginBottom: '20px', animation: 'bounce 1s ease' }}>✅</div>
-                        <h2 style={{ fontFamily: 'Nunito', color: 'var(--green)', fontSize: '28px', marginBottom: '15px' }}>Ödemeniz Alındı!</h2>
-                        <h3 style={{ fontSize: '18px', color: 'var(--dark)' }}>Sipariş Numaranız: <span style={{ fontWeight: '900', color: 'var(--orange)' }}>TR-{(Math.random() * 1000000).toFixed(0)}</span></h3>
-                        <p style={{ marginTop: '20px', fontSize: '16px', color: 'var(--mid)', lineHeight: '1.6', background: '#eafaf1', padding: '15px', borderRadius: '8px', border: '1px solid #c3e6cb' }}>
-                            Harika haber! Ürününüz hazırlanıp <strong>Kargo şirketine faturalandırıldı.</strong>
-                            En kısa sürede tarafınıza teslim edilmek üzere yola çıkacaktır. Bizimle alışveriş yaptığınız için çok teşekkür ederiz!
-                        </p>
-                        <button className="checkout-next-btn" style={{ maxWidth: '250px', margin: '30px auto 0', padding: '15px' }} onClick={() => { setIsCheckoutOpen(false); window.scrollTo(0, 0); }}>👏 Alışverişe Geri Dön</button>
-                    </div>
-                )}
-            </div>
-        </div>
+                                <div 
+                                    className={`p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                                        extras.fast ? 'border-primary bg-primary/5' : 'border-gray-200 bg-white'
+                                    }`}
+                                    onClick={() => handleExtra('fast')}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                                extras.fast ? 'border-primary bg-primary' : 'border-gray-300'
+                                            }`}>
+                                                {extras.fast && <Check className="w-3 h-3 text-white" />}
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold flex items-center gap-2">
+                                                    <Zap className="w-4 h-4 text-yellow-500" />
+                                                    SuperExpress Jet Teslimat
+                                                </p>
+                                                <p className="text-xs text-muted-foreground">Yarin elinizde!</p>
+                                            </div>
+                                        </div>
+                                        <Badge variant="secondary" className="font-bold">+39 TL</Badge>
+                                    </div>
+                                </div>
+
+                                <div 
+                                    className={`p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                                        extras.pack ? 'border-primary bg-primary/5' : 'border-gray-200 bg-white'
+                                    }`}
+                                    onClick={() => handleExtra('pack')}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                                extras.pack ? 'border-primary bg-primary' : 'border-gray-300'
+                                            }`}>
+                                                {extras.pack && <Check className="w-3 h-3 text-white" />}
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold flex items-center gap-2">
+                                                    <Gift className="w-4 h-4 text-purple-500" />
+                                                    Luks Jut Kumas Hediye Paketi
+                                                </p>
+                                                <p className="text-xs text-muted-foreground">Ozel ambalaj ve hediye notu</p>
+                                            </div>
+                                        </div>
+                                        <Badge variant="secondary" className="font-bold">+25 TL</Badge>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Card className="mb-6 bg-gray-50">
+                                <CardContent className="p-4 space-y-2">
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">Sepetteki Urunler</span>
+                                        <span className="font-medium">{subtotal.toLocaleString('tr-TR')} TL</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm text-primary">
+                                        <span>Ozel Hizmet Paketleri</span>
+                                        <span className="font-medium">+ {extTotal} TL</span>
+                                    </div>
+                                    <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                                        <span>Sepet Tutari</span>
+                                        <span className="text-primary">{(subtotal + extTotal).toLocaleString('tr-TR')} TL</span>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <div className="flex gap-3">
+                                <Button onClick={() => { setStep(3); logAction('Adim 3: Kart Odemesine Gecildi'); }} className="flex-1 bg-dark hover:bg-dark/90">
+                                    Kart Bilgilerini Gir
+                                    <ChevronRight className="w-4 h-4 ml-2" />
+                                </Button>
+                                <Button variant="outline" onClick={() => setStep(1)}>Geri Don</Button>
+                            </div>
+                        </div>
+                    )}
+
+                    {step === 3 && (
+                        <form className="p-6" onSubmit={handleCreditCardSubmit}>
+                            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                                <CreditCard className="w-5 h-5 text-primary" />
+                                Guvenli Odeme
+                            </h3>
+
+                            <Card className="mb-6 bg-gray-50 border-2">
+                                <CardContent className="p-4 space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">Kart Uzerindeki Isim</label>
+                                        <Input 
+                                            type="text" 
+                                            value={ccName} 
+                                            onChange={e => setCcName(e.target.value)} 
+                                            placeholder="ORNEK KISI" 
+                                            className="uppercase"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">Kart Numarasi</label>
+                                        <div className="relative">
+                                            <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                            <Input 
+                                                type="text" 
+                                                value={ccNum} 
+                                                onChange={e => {
+                                                    const val = e.target.value.replace(/\D/g, '');
+                                                    const formatted = val.match(/.{1,4}/g)?.join(' ') || '';
+                                                    setCcNum(formatted);
+                                                }} 
+                                                placeholder="XXXX XXXX XXXX XXXX" 
+                                                maxLength={19}
+                                                className="pl-10 font-mono"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">Son Kullanma</label>
+                                            <Input 
+                                                type="text" 
+                                                value={ccExpiry} 
+                                                onChange={e => {
+                                                    let val = e.target.value.replace(/\D/g, '');
+                                                    if (val.length > 2) val = val.slice(0, 2) + '/' + val.slice(2, 4);
+                                                    setCcExpiry(val);
+                                                }} 
+                                                placeholder="AA/YY" 
+                                                maxLength={5}
+                                                className="font-mono"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">CVV</label>
+                                            <Input 
+                                                type="password" 
+                                                value={ccCvv} 
+                                                onChange={e => setCcCvv(e.target.value)} 
+                                                placeholder="***" 
+                                                maxLength={3}
+                                                className="font-mono"
+                                            />
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            {/* DARK PATTERN: Sneak fee warning */}
+                            <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg mb-6">
+                                <div className="flex items-start gap-3">
+                                    <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                                    <div>
+                                        <p className="font-bold text-red-700 mb-1">SON DAKIKA ODEME UYARISI</p>
+                                        <p className="text-sm text-red-600 leading-relaxed">
+                                            TrendSepet altyapisinin guvenligi ve tasimacilik prosedurleri sebebiyle faturaniza su an
+                                            <strong> {serviceFee.toFixed(2)} TL Sistem Operasyon Bedeli</strong> ve
+                                            <strong> {insuranceFee.toFixed(2)} TL Zorunlu Kargo Sigortasi Primi</strong> yansitilmistir.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Card className="mb-6 bg-gray-50">
+                                <CardContent className="p-4 space-y-2">
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">Sepet + Ekstra Paketler</span>
+                                        <span className="font-medium">{(subtotal + extTotal).toLocaleString('tr-TR')} TL</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm text-red-600">
+                                        <span>Zorunlu Kesintiler</span>
+                                        <span className="font-medium">+ {(serviceFee + insuranceFee).toFixed(2)} TL</span>
+                                    </div>
+                                    <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                                        <span>Kredi Kartindan Cekilecek</span>
+                                        <span className="text-primary">{finalTotal.toFixed(2)} TL</span>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <div className="flex gap-3">
+                                <Button type="submit" className="flex-1 h-12 bg-green-600 hover:bg-green-700 shadow-glow-success font-bold">
+                                    <Lock className="w-4 h-4 mr-2" />
+                                    SIPARISI ONAYLA
+                                </Button>
+                                <Button type="button" variant="outline" onClick={() => setStep(2)}>Geri</Button>
+                            </div>
+
+                            <div className="flex items-center justify-center gap-4 mt-4 text-xs text-gray-400">
+                                <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> 256-bit SSL</span>
+                                <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> 3D Secure</span>
+                                <span className="flex items-center gap-1"><CreditCard className="w-3 h-3" /> PCI DSS</span>
+                            </div>
+                        </form>
+                    )}
+
+                    {step === 4 && (
+                        <div className="p-8 text-center">
+                            <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ type: 'spring', delay: 0.2 }}
+                                className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6"
+                            >
+                                <CheckCircle2 className="w-12 h-12 text-green-600" />
+                            </motion.div>
+                            <motion.h2
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.4 }}
+                                className="text-2xl font-bold text-green-600 mb-2"
+                            >
+                                Odemeniz Alindi!
+                            </motion.h2>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5 }}
+                            >
+                                <p className="text-lg mb-4">
+                                    Siparis Numaraniz: <span className="font-bold text-primary">TR-{(Math.random() * 1000000).toFixed(0)}</span>
+                                </p>
+                                <Card className="bg-green-50 border-green-200 mb-6">
+                                    <CardContent className="p-4">
+                                        <p className="text-green-700 text-sm leading-relaxed">
+                                            Harika haber! Urununuz hazirlanip <strong>Kargo sirketine faturalandirildi.</strong>
+                                            En kisa surede tarafiniza teslim edilmek uzere yola cikacaktir.
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                                <Button 
+                                    onClick={() => { setIsCheckoutOpen(false); window.scrollTo(0, 0); }}
+                                    className="bg-primary hover:bg-primary/90"
+                                >
+                                    Alisverise Geri Don
+                                </Button>
+                            </motion.div>
+                        </div>
+                    )}
+                </motion.div>
+            </motion.div>
+        </AnimatePresence>
     );
 };
 
@@ -258,52 +622,133 @@ const ProductDetailModal = () => {
 
     const m = String(Math.floor(sec / 60)).padStart(2, '0');
     const s = String(sec % 60).padStart(2, '0');
+    const isFav = favorites.has(p.id);
 
     return (
-        <div className="modal-bg" onClick={(e) => {
-            if (e.target === e.currentTarget) { setDetailProductId(null); logAction('Ürün Detayı Dışarı Tıklanarak Kapatıldı'); }
-        }}>
-            <div className="modal-box detail-box-wide">
-                <div className="detail-header">
-                    <span style={{ fontFamily: 'Nunito', fontWeight: 800 }}>Ürün İncelemesi</span>
-                    <button onClick={() => { setDetailProductId(null); logAction('Ürün Detayı Kapatıldı'); }} style={{ background: 'none', border: 'none', color: '#fff', fontSize: 20, cursor: 'pointer' }}>✕</button>
-                </div>
-                <div className="detail-body">
-                    <div>
-                        <div className="detail-img">{p.emoji}</div>
-                        <div className="detail-countdown">🔥 Fırsat Fiyatı <span className="dc-timer">{m}:{s}</span> sonra iptal olacak!</div>
-                        {p.stock <= 5 && <div className="card-stock-warn" style={{ marginTop: 8 }}>⚠️ DİKKAT: Son {p.stock} adet stok kaldı! Kaçırmak üzeresin!</div>}
-                        <div className="viewer-badge" style={{ marginTop: 8 }}>👁️ Şu an {p.viewers + 12} kişi inceledi</div>
+        <AnimatePresence>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={(e) => {
+                    if (e.target === e.currentTarget) { setDetailProductId(null); logAction('Urun Detayi Disari Tiklanarak Kapatildi'); }
+                }}
+                className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[600] flex items-center justify-center p-4"
+            >
+                <motion.div
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.95, opacity: 0 }}
+                    className="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+                >
+                    <div className="flex items-center justify-between px-6 py-4 bg-dark-secondary text-white">
+                        <h3 className="font-bold">Urun Incelemesi</h3>
+                        <button 
+                            onClick={() => { setDetailProductId(null); logAction('Urun Detayi Kapatildi'); }}
+                            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
                     </div>
-                    <div className="detail-info">
-                        <div className="detail-brand" style={{ textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '1px' }}>{p.brand} • {p.category}</div>
-                        <h2 style={{ fontFamily: 'Nunito', fontSize: '26px' }}>{p.name}</h2>
-                        <div className="detail-rating">⭐⭐⭐⭐⭐<span style={{ color: '#888', marginLeft: 4 }}>{p.rating} Özel Puan Belgesi</span></div>
-                        <div className="detail-discount" style={{ background: 'var(--red)', color: '#fff', padding: '4px 8px', borderRadius: '4px', display: 'inline-block', fontSize: '13px', fontWeight: 'bold' }}>ŞOK %{p.fakeDiscount} İNDİRİM</div>
 
-                        <div style={{ marginTop: '15px', padding: '15px', background: '#fcfcfc', border: '1px solid #eee', borderRadius: '10px' }}>
-                            <div className="detail-old" style={{ textDecoration: 'line-through', color: '#aaa', fontSize: '16px' }}>₺{p.oldPrice.toLocaleString('tr-TR')}</div>
-                            <div className="detail-price" style={{ color: 'var(--orange)', fontSize: '32px', fontWeight: '900' }}>₺{p.price.toLocaleString('tr-TR')}</div>
-                            {p.packageNote && <div className="detail-price-note" style={{ color: 'var(--dark)', fontWeight: '600' }}>📦 Uyarı: {p.packageNote}</div>}
+                    <div className="grid md:grid-cols-2 gap-6 p-6">
+                        <div>
+                            <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl flex items-center justify-center text-8xl mb-4">
+                                {p.emoji}
+                            </div>
+                            
+                            {/* Countdown */}
+                            <div className="flex items-center gap-3 p-3 bg-red-50 border border-red-200 rounded-xl mb-3">
+                                <div className="p-2 rounded-full bg-red-100">
+                                    <Clock className="w-4 h-4 text-red-600" />
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-xs text-red-600 font-medium">Firsat Fiyati</p>
+                                    <p className="text-lg font-bold text-red-700 font-mono">{m}:{s}</p>
+                                </div>
+                                <span className="text-sm text-red-600">sonra iptal olacak!</span>
+                            </div>
+
+                            {p.stock <= 5 && (
+                                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl mb-3">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <AlertTriangle className="w-4 h-4 text-amber-600" />
+                                        <span className="text-sm font-semibold text-amber-700">
+                                            Son {p.stock} adet stok kaldi!
+                                        </span>
+                                    </div>
+                                    <Progress value={(p.stock / 20) * 100} className="h-2 bg-amber-100" />
+                                </div>
+                            )}
+
+                            <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                                <Eye className="w-4 h-4 text-blue-600" />
+                                <span className="text-sm text-blue-700">
+                                    Su an <strong>{p.viewers + 12}</strong> kisi inceledi
+                                </span>
+                            </div>
                         </div>
 
-                        <p className="detail-desc" style={{ lineHeight: '1.6', marginTop: '15px' }}>
-                            Bu efsanevi <strong>{p.name}</strong> modeli, muhteşem yapısıyla her saniye değer kazanıyor. Hemen tükenmeden bu kusursuz deneyimi sipariş et.
-                        </p>
-                        <div className="detail-specs">
-                            <span>🎨 Renk Opsiyonu: {p.color}</span>
-                            <span>⚡ Teslimat: 24 Saatte Kargoda</span>
-                        </div>
+                        <div>
+                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                                {p.brand} - {p.category}
+                            </p>
+                            <h2 className="text-2xl font-bold text-foreground mb-3">{p.name}</h2>
+                            
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="flex items-center gap-0.5">
+                                    {[...Array(5)].map((_, i) => (
+                                        <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                                    ))}
+                                </div>
+                                <span className="text-sm text-muted-foreground">{p.rating} Ozel Puan Belgesi</span>
+                            </div>
 
-                        <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                            <button className="detail-add-btn" style={{ flex: 2, padding: '16px', background: 'var(--orange)', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => { addToCart(p.id); setDetailProductId(null); }}>🛒 Sepete Ekle, Kaçırma!</button>
-                            <button className="detail-fav-btn" style={{ flex: 1, padding: '16px', background: 'transparent', border: '2px solid var(--orange)', color: 'var(--orange)', borderRadius: '8px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => toggleFav(p.id)}>
-                                {favorites.has(p.id) ? '❤️ Çıkar' : '🤍 Koru'}
-                            </button>
+                            <Badge variant="destructive" className="mb-4">SOK %{p.fakeDiscount} INDIRIM</Badge>
+
+                            <Card className="mb-4 bg-gray-50">
+                                <CardContent className="p-4">
+                                    <p className="text-sm text-muted-foreground line-through">
+                                        {p.oldPrice.toLocaleString('tr-TR')} TL
+                                    </p>
+                                    <p className="text-3xl font-black text-primary">
+                                        {p.price.toLocaleString('tr-TR')} TL
+                                    </p>
+                                    {p.packageNote && (
+                                        <p className="text-sm text-muted-foreground mt-2 flex items-center gap-1">
+                                            <Package className="w-4 h-4" />
+                                            Uyari: {p.packageNote}
+                                        </p>
+                                    )}
+                                </CardContent>
+                            </Card>
+
+                            <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                                Bu efsanevi <strong>{p.name}</strong> modeli, muhtesem yapisiyla her saniye deger kazaniyor.
+                                Hemen tukenmeden bu kusursuz deneyimi siparis edin!
+                            </p>
+
+                            <div className="space-y-3">
+                                <Button 
+                                    onClick={() => { addToCart(p.id); setDetailProductId(null); }}
+                                    className="w-full h-12 bg-primary hover:bg-primary/90 font-bold shadow-glow-primary"
+                                >
+                                    <ShoppingCart className="w-5 h-5 mr-2" />
+                                    Sepete Ekle
+                                </Button>
+                                <Button 
+                                    onClick={() => toggleFav(p.id)}
+                                    variant="outline"
+                                    className={`w-full ${isFav ? 'text-red-500 border-red-200 bg-red-50' : ''}`}
+                                >
+                                    <Heart className={`w-5 h-5 mr-2 ${isFav ? 'fill-current' : ''}`} />
+                                    {isFav ? 'Favorilerden Cikar' : 'Favorilere Ekle'}
+                                </Button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
+                </motion.div>
+            </motion.div>
+        </AnimatePresence>
     );
 };

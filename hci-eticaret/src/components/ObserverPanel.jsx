@@ -1,18 +1,50 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '../context/AppContext';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Activity,
+  Play,
+  CheckCircle2,
+  AlertTriangle,
+  Clock,
+  MousePointer2,
+  Trash2,
+  Terminal,
+  Eye,
+  Database,
+  ChevronDown,
+  ChevronUp,
+  Keyboard,
+  Target,
+  Timer,
+  BarChart3,
+  XCircle
+} from 'lucide-react';
 
 const taskDescriptions = [
-    "Beyaz spor ayakkabı arayın (arama çubuğunu veya kategoriyi kullanarak) ve bir tanesini sepete ekleyin.",
-    "Sepetinizdeki tüm ürünlerin toplam fiyatını bulun ve not edin.",
-    "Ödeme işlemini başlatın ve sadece ilerleme butonlarına tıklayarak son adıma kadar gidin.",
-    "Sayfa yüklendiğinde gelen çerez bildirimini bulun ve çerezleri reddedin / sadece zorunlu çerezleri seçin.",
-    "Herhangi bir ürün kartındaki kalp ikonuna tıklayarak ürünü favorilere ekleyin."
+    "Beyaz spor ayakkabi arayin (arama cubugun veya kategoriyi kullanarak) ve bir tanesini sepete ekleyin.",
+    "Sepetinizdeki tum urunlerin toplam fiyatini bulun ve not edin.",
+    "Odeme islemini baslatin ve sadece ilerleme butonlarina tiklayarak son adima kadar gidin.",
+    "Sayfa yuklendiginde gelen cerez bildirimini bulun ve cerezleri reddedin / sadece zorunlu cerezleri secin.",
+    "Herhangi bir urun kartindaki kalp ikonuna tiklayarak urunu favorilere ekleyin."
 ];
 
 export const ObserverPanel = () => {
     const [visible, setVisible] = useState(false);
+    const [minimized, setMinimized] = useState(false);
     const { actionLogs, logAction, currentTask, startTask, completeTask, taskReports } = useAppContext();
-    const [selectedTaskIdx, setSelectedTaskIdx] = useState(0);
+    const [selectedTaskIdx, setSelectedTaskIdx] = useState('0');
 
     useEffect(() => {
         const handleKey = (e) => {
@@ -40,91 +72,256 @@ export const ObserverPanel = () => {
 
     if (!visible) return null;
 
+    const errorLogs = actionLogs.filter(l => l.type === 'ERROR').length;
+    const infoLogs = actionLogs.filter(l => l.type === 'INFO').length;
+
     return (
-        <div id="observerPanel" style={{ display: 'block', width: '420px', maxHeight: '90vh', overflowY: 'auto' }}>
-            <div className="op-header">
-                <h4>🔬 Gelişmiş UX Gözlemci Modu</h4><span>CTRL+SHIFT+T</span>
-            </div>
-
-            <div className="op-body">
-                <div className="op-task-selector">
-                    <label style={{ color: 'var(--orange)' }}>Sistem Görevi Seçiniz</label>
-                    <select value={selectedTaskIdx} onChange={(e) => setSelectedTaskIdx(Number(e.target.value))}>
-                        <option value="0">Görev 1: Beyaz Spor Ayakkabı Bul</option>
-                        <option value="1">Görev 2: Toplam Fiyat Kontrolü</option>
-                        <option value="2">Görev 3: Ödeme Sürecini İncele</option>
-                        <option value="3">Görev 4: Çerezleri Kapatma</option>
-                        <option value="4">Görev 5: Favorilere Ekleme</option>
-                    </select>
-                </div>
-
-                <div className="op-task-display">
-                    <strong>📝 GÖREV {selectedTaskIdx + 1} HEDEFİ:</strong>
-                    <p>{taskDescriptions[selectedTaskIdx]}</p>
-                </div>
-
-                {/* TASK CONTROLS & TRACKING */}
-                <div style={{ background: '#1A1A2E', padding: 12, borderRadius: 8, marginBottom: 12, border: '1px solid #333' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                        <strong style={{ fontSize: 12, color: '#fff' }}>⏳ GÖREV TAKİBİ</strong>
-                        {currentTask.startTime && <span style={{ color: 'var(--orange)', fontWeight: 'bold' }}>{elapsed} sn</span>}
-                    </div>
-
-                    {!currentTask.startTime ? (
-                        <button style={{ width: '100%', background: 'var(--green)', color: '#fff', border: 'none', padding: 10, borderRadius: 8, fontWeight: 'bold', cursor: 'pointer' }}
-                            onClick={() => startTask(selectedTaskIdx)}>
-                            🚀 GÖREVİ BAŞLAT
-                        </button>
-                    ) : (
-                        <div>
-                            <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
-                                <div style={{ flex: 1, background: '#333', padding: 6, borderRadius: 4, textAlign: 'center' }}>
-                                    <div style={{ fontSize: 10, color: '#aaa' }}>Hatalar</div>
-                                    <div style={{ color: 'var(--red)', fontWeight: 'bold' }}>{currentTask.errors}</div>
-                                </div>
-                                <div style={{ flex: 1, background: '#333', padding: 6, borderRadius: 4, textAlign: 'center' }}>
-                                    <div style={{ fontSize: 10, color: '#aaa' }}>Tıklamalar</div>
-                                    <div style={{ color: '#fff', fontWeight: 'bold' }}>{actionLogs.length}</div>
-                                </div>
+        <AnimatePresence>
+            <motion.div
+                initial={{ opacity: 0, y: 100, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 100, scale: 0.9 }}
+                className="fixed bottom-4 left-4 z-[800] w-[420px]"
+            >
+                <Card className="bg-[#0a0a0f] border-primary/30 shadow-2xl shadow-primary/10 overflow-hidden">
+                    {/* Header */}
+                    <div className="bg-gradient-to-r from-primary to-primary/80 px-4 py-3 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+                                <Terminal className="w-4 h-4 text-white" />
                             </div>
-                            <button style={{ width: '100%', background: 'var(--orange)', color: '#fff', border: 'none', padding: 10, borderRadius: 8, fontWeight: 'bold', cursor: 'pointer' }}
-                                onClick={completeTask}>
-                                ✅ GÖREVİ TAMAMLA VE KAYDET
+                            <div>
+                                <h4 className="text-sm font-bold text-white">UX Observer Panel</h4>
+                                <p className="text-[10px] text-white/70">CTRL+SHIFT+T</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Badge variant="secondary" className="bg-white/20 text-white text-[10px] border-0">
+                                v2.0
+                            </Badge>
+                            <button
+                                onClick={() => setMinimized(!minimized)}
+                                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+                            >
+                                {minimized ? (
+                                    <ChevronUp className="w-4 h-4 text-white" />
+                                ) : (
+                                    <ChevronDown className="w-4 h-4 text-white" />
+                                )}
                             </button>
                         </div>
-                    )}
-                </div>
-
-                {/* LOGS */}
-                <label className="op-notes-label" style={{ marginTop: 10 }}>📝 CANLI KULLANICI LOGLARI (localStorage)</label>
-                <div className="op-log" style={{ maxHeight: '200px', background: '#0F3460' }}>
-                    {actionLogs.length === 0 && <div style={{ padding: 8, color: '#666', fontSize: 11 }}>Henüz aktivite yok.</div>}
-                    {actionLogs.map((log, idx) => (
-                        <div key={idx} className="op-log-entry" style={{ color: log.type === 'ERROR' ? 'var(--red)' : '#ccc', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                            <span style={{ opacity: 0.5 }}>({log.time})</span> {log.type === 'ERROR' ? '⚠️ ' : '👉 '}{log.desc}
-                        </div>
-                    ))}
-                </div>
-
-                {/* RAPOR SONUÇLARI */}
-                {Object.keys(taskReports).length > 0 && (
-                    <div style={{ marginTop: 15 }}>
-                        <strong style={{ fontSize: 11, color: '#aaa' }}>KAYDEDİLEN GÖREV SONUÇLARI:</strong>
-                        {Object.entries(taskReports).map(([id, rep]) => (
-                            <div key={id} style={{ background: '#1A1A2E', border: '1px solid #444', padding: 6, margin: '4px 0', fontSize: 11, borderRadius: 4 }}>
-                                <strong>G{Number(id) + 1}:</strong> {rep.duration} sn | {rep.errors} Hata
-                            </div>
-                        ))}
                     </div>
-                )}
 
-                <div style={{ display: 'flex', gap: 10, marginTop: 15 }}>
-                    <button style={{ flex: 1, background: 'transparent', color: '#888', border: '1px solid #444', padding: '6px', cursor: 'pointer', borderRadius: 6, fontSize: 11 }}
-                        onClick={() => { localStorage.clear(); window.location.reload(); }}>
-                        🗑️ Tüm Verileri Sil
-                    </button>
-                </div>
-            </div>
-        </div>
+                    <AnimatePresence>
+                        {!minimized && (
+                            <motion.div
+                                initial={{ height: 0 }}
+                                animate={{ height: 'auto' }}
+                                exit={{ height: 0 }}
+                                className="overflow-hidden"
+                            >
+                                <CardContent className="p-4 space-y-4">
+                                    {/* Task Selector */}
+                                    <div>
+                                        <label className="block text-[10px] text-primary uppercase tracking-wider font-bold mb-2">
+                                            Sistem Gorevi Seciniz
+                                        </label>
+                                        <Select value={selectedTaskIdx} onValueChange={setSelectedTaskIdx}>
+                                            <SelectTrigger className="bg-[#12121a] border-white/10 text-white text-sm">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-[#12121a] border-white/10">
+                                                <SelectItem value="0" className="text-gray-300">Gorev 1: Beyaz Spor Ayakkabi Bul</SelectItem>
+                                                <SelectItem value="1" className="text-gray-300">Gorev 2: Toplam Fiyat Kontrolu</SelectItem>
+                                                <SelectItem value="2" className="text-gray-300">Gorev 3: Odeme Surecini Incele</SelectItem>
+                                                <SelectItem value="3" className="text-gray-300">Gorev 4: Cerezleri Kapatma</SelectItem>
+                                                <SelectItem value="4" className="text-gray-300">Gorev 5: Favorilere Ekleme</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {/* Task Description */}
+                                    <div className="p-3 bg-[#12121a] rounded-xl border-l-4 border-primary">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <Target className="w-4 h-4 text-primary" />
+                                            <span className="text-[10px] text-primary uppercase tracking-wider font-bold">
+                                                Gorev {Number(selectedTaskIdx) + 1} Hedefi
+                                            </span>
+                                        </div>
+                                        <p className="text-sm text-gray-300 leading-relaxed">
+                                            {taskDescriptions[Number(selectedTaskIdx)]}
+                                        </p>
+                                    </div>
+
+                                    {/* Task Controls */}
+                                    <div className="p-3 bg-[#12121a] rounded-xl border border-white/5">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className="text-xs font-bold text-white flex items-center gap-2">
+                                                <Timer className="w-4 h-4" />
+                                                GOREV TAKIBI
+                                            </span>
+                                            {currentTask.startTime && (
+                                                <Badge className="bg-primary/20 text-primary border-0 font-mono">
+                                                    {elapsed}s
+                                                </Badge>
+                                            )}
+                                        </div>
+
+                                        {!currentTask.startTime ? (
+                                            <Button
+                                                onClick={() => startTask(Number(selectedTaskIdx))}
+                                                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
+                                            >
+                                                <Play className="w-4 h-4 mr-2" />
+                                                GOREVI BASLAT
+                                            </Button>
+                                        ) : (
+                                            <div className="space-y-3">
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <div className="p-3 bg-[#1a1a24] rounded-lg text-center">
+                                                        <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Hatalar</div>
+                                                        <div className={`text-xl font-bold ${currentTask.errors > 0 ? 'text-red-500' : 'text-gray-400'}`}>
+                                                            {currentTask.errors}
+                                                        </div>
+                                                    </div>
+                                                    <div className="p-3 bg-[#1a1a24] rounded-lg text-center">
+                                                        <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Tiklamalar</div>
+                                                        <div className="text-xl font-bold text-white">
+                                                            {actionLogs.length}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <Button
+                                                    onClick={completeTask}
+                                                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold"
+                                                >
+                                                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                                                    GOREVI TAMAMLA VE KAYDET
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Logs */}
+                                    <div>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <label className="text-[10px] text-gray-500 uppercase tracking-wider font-bold flex items-center gap-2">
+                                                <Database className="w-3 h-3" />
+                                                CANLI KULLANICI LOGLARI
+                                            </label>
+                                            <div className="flex items-center gap-2">
+                                                <Badge variant="outline" className="text-[9px] border-gray-700 text-gray-400">
+                                                    {infoLogs} info
+                                                </Badge>
+                                                <Badge variant="outline" className="text-[9px] border-red-700 text-red-400">
+                                                    {errorLogs} error
+                                                </Badge>
+                                            </div>
+                                        </div>
+                                        <div className="bg-[#12121a] rounded-xl max-h-[180px] overflow-y-auto scrollbar-hide">
+                                            {actionLogs.length === 0 ? (
+                                                <div className="p-4 text-center text-gray-600 text-xs">
+                                                    <Activity className="w-6 h-6 mx-auto mb-2 opacity-50" />
+                                                    Henuz aktivite yok.
+                                                </div>
+                                            ) : (
+                                                <div className="divide-y divide-white/5">
+                                                    {actionLogs.slice(0, 20).map((log, idx) => (
+                                                        <div 
+                                                            key={idx} 
+                                                            className={`px-3 py-2 text-xs flex items-start gap-2 ${
+                                                                log.type === 'ERROR' ? 'bg-red-500/5' : ''
+                                                            }`}
+                                                        >
+                                                            {log.type === 'ERROR' ? (
+                                                                <AlertTriangle className="w-3 h-3 text-red-500 flex-shrink-0 mt-0.5" />
+                                                            ) : (
+                                                                <MousePointer2 className="w-3 h-3 text-gray-500 flex-shrink-0 mt-0.5" />
+                                                            )}
+                                                            <div className="flex-1 min-w-0">
+                                                                <span className={`${log.type === 'ERROR' ? 'text-red-400' : 'text-gray-400'} break-words`}>
+                                                                    {log.desc}
+                                                                </span>
+                                                            </div>
+                                                            <span className="text-gray-600 text-[10px] flex-shrink-0">
+                                                                {log.time}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Task Reports */}
+                                    {Object.keys(taskReports).length > 0 && (
+                                        <div>
+                                            <label className="block text-[10px] text-gray-500 uppercase tracking-wider font-bold mb-2 flex items-center gap-2">
+                                                <BarChart3 className="w-3 h-3" />
+                                                KAYDEDILEN GOREV SONUCLARI
+                                            </label>
+                                            <div className="space-y-2">
+                                                {Object.entries(taskReports).map(([id, rep]) => (
+                                                    <div 
+                                                        key={id} 
+                                                        className="flex items-center justify-between p-2 bg-[#12121a] rounded-lg border border-green-500/20"
+                                                    >
+                                                        <div className="flex items-center gap-2">
+                                                            <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                                            <span className="text-sm font-medium text-white">
+                                                                Gorev {Number(id) + 1}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex items-center gap-3 text-xs">
+                                                            <span className="text-gray-400 flex items-center gap-1">
+                                                                <Clock className="w-3 h-3" />
+                                                                {rep.duration}s
+                                                            </span>
+                                                            <span className={`flex items-center gap-1 ${rep.errors > 0 ? 'text-red-400' : 'text-gray-500'}`}>
+                                                                <AlertTriangle className="w-3 h-3" />
+                                                                {rep.errors}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Actions */}
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => { localStorage.clear(); window.location.reload(); }}
+                                            className="flex-1 bg-transparent border-gray-700 text-gray-400 hover:text-white hover:border-red-500 hover:bg-red-500/10"
+                                        >
+                                            <Trash2 className="w-4 h-4 mr-2" />
+                                            Tum Verileri Sil
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setVisible(false)}
+                                            className="bg-transparent border-gray-700 text-gray-400 hover:text-white hover:border-gray-500"
+                                        >
+                                            <XCircle className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+
+                                    {/* Keyboard Shortcut */}
+                                    <div className="text-center">
+                                        <span className="text-[10px] text-gray-600 flex items-center justify-center gap-1">
+                                            <Keyboard className="w-3 h-3" />
+                                            CTRL+SHIFT+T ile ac/kapat
+                                        </span>
+                                    </div>
+                                </CardContent>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </Card>
+            </motion.div>
+        </AnimatePresence>
     );
 };
