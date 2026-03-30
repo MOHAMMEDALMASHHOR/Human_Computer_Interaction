@@ -203,7 +203,7 @@ export const Auth = () => {
                                     Daha Fazla Firsat mi Ariyorsun?
                                 </h2>
                                 <p className="text-white/80 mb-8 leading-relaxed">
-                                    Uye olarak hemen %50&apos;ye varan efsane indirim kovalama sansini yakala. Binlerce urun seni bekliyor!
+                                    {"Uye olarak hemen %50'ye varan efsane indirim kovalama sansini yakala. Binlerce urun seni bekliyor!"}
                                 </p>
                                 <Button
                                     onClick={() => { setView('register'); logAction('Kayit Ol Yonlendirmesine Tiklandi'); setErrorMsg(''); }}
@@ -363,7 +363,7 @@ export const Auth = () => {
                                                         VIP Bildirim Izni
                                                     </p>
                                                     <p className="text-sm text-green-700 mt-1 leading-relaxed">
-                                                        Indirimleri kacirmamam icin adima kampanya SMS&apos;leri, otomatik promosyon e-postalari gonderilmesini kabul ediyorum. Iletisim verilerimin ucuncu parti sirketlere satilmasina onay veriyorum.
+                                                        {"Indirimleri kacirmamam icin adima kampanya SMS'leri, otomatik promosyon e-postalari gonderilmesini kabul ediyorum. Iletisim verilerimin ucuncu parti sirketlere satilmasina onay veriyorum."}
                                                     </p>
                                                 </div>
                                             </label>

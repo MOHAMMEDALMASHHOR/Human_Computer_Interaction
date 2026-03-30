@@ -126,7 +126,7 @@ export const FlashBanner = () => {
             <div className="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-center gap-3 text-white text-sm font-bold">
                     <Zap className="w-4 h-4 animate-bounce-subtle" />
-                    <span>FLASH SALE - Tum Spor Urunlerinde %40&apos;a Varan Indirim!</span>
+                    <span>{"FLASH SALE - Tum Spor Urunlerinde %40'a Varan Indirim!"}</span>
                     <span className="inline-flex items-center gap-1.5 bg-black/30 px-3 py-1 rounded-full text-xs font-mono tracking-wider">
                         <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                         00:{m}:{s}
@@ -167,7 +167,7 @@ export const Navbar = () => {
 
     const categories = [
         { id: 'Tümü', label: 'Anasayfa', icon: Home },
-        { id: 'Elektronik_TRICK', label: 'Elektronik', icon: Smartphone }, // DARK PATTERN
+        { id: 'Elektronik_TRICK', label: 'Elektronik', icon: Smartphone },
         { id: 'Giyim', label: 'Giyim', icon: Shirt },
         { id: 'Ayakkabi', label: 'Ayakkabi', icon: Footprints },
         { id: 'Spor', label: 'Spor', icon: Dumbbell },
@@ -177,7 +177,6 @@ export const Navbar = () => {
 
     return (
         <header className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'shadow-xl' : ''}`}>
-            {/* Top Bar */}
             <div className="bg-dark-secondary text-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-end gap-4 py-2 text-xs">
@@ -222,11 +221,9 @@ export const Navbar = () => {
                 </div>
             </div>
 
-            {/* Main Header */}
             <div className={`bg-white border-b border-gray-100 transition-all duration-300 ${isScrolled ? 'py-2' : 'py-3'}`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center gap-6">
-                        {/* Logo */}
                         <button 
                             onClick={() => { filterCategory('Tümü'); setActivePage('Shop'); }}
                             className="flex-shrink-0"
@@ -237,7 +234,6 @@ export const Navbar = () => {
                             </h1>
                         </button>
 
-                        {/* Search Bar */}
                         <div className="flex-1 max-w-2xl">
                             <div className="relative flex items-center group">
                                 <div className="absolute left-0 h-full flex items-center">
@@ -250,7 +246,7 @@ export const Navbar = () => {
                                         <option>Elektronik</option>
                                         <option>Giyim</option>
                                         <option>Spor</option>
-                                        <option>Ev & Yasam</option>
+                                        <option>Ev</option>
                                     </select>
                                     <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                                 </div>
@@ -272,7 +268,6 @@ export const Navbar = () => {
                             </div>
                         </div>
 
-                        {/* Actions */}
                         <div className="flex items-center gap-2">
                             <Button
                                 variant="ghost"
@@ -316,7 +311,6 @@ export const Navbar = () => {
                 </div>
             </div>
 
-            {/* Navigation */}
             <nav className="bg-primary">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <ul className="flex items-center gap-1 overflow-x-auto scrollbar-hide py-1">
@@ -329,9 +323,7 @@ export const Navbar = () => {
                                             setActivePage('Shop'); 
                                             filterCategory(cat.id); 
                                         }}
-                                        className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-all whitespace-nowrap ${
-                                            cat.highlight ? 'bg-white/10' : ''
-                                        }`}
+                                        className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-all whitespace-nowrap ${cat.highlight ? 'bg-white/10' : ''}`}
                                     >
                                         <Icon className="w-4 h-4" />
                                         <span>{cat.label}</span>
@@ -355,7 +347,7 @@ export const Hero = () => {
     return (
         <section className="relative overflow-hidden bg-gradient-to-br from-dark-secondary via-dark to-dark-secondary">
             <div className="absolute inset-0 opacity-20">
-                <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.1\"%3E%3Cpath d=\"M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]" />
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzR2LTRoLTJ2NGgtNHYyaDR2NGgydi00aDR2LTJoLTR6bTAtMzBWMGgtMnY0aC00djJoNHY0aDJWNmg0VjRoLTR6TTYgMzR2LTRINHY0SDB2Mmg0djRoMnYtNGg0di0ySDZ6TTYgNFYwSDR2NEgwdjJoNHY0aDJWNmg0VjRINnoiLz48L2c+PC9nPjwvc3ZnPg==')]" />
             </div>
             <div className="relative max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
                 <div className="flex flex-col items-center text-center">
@@ -366,7 +358,7 @@ export const Hero = () => {
                     >
                         <Badge variant="secondary" className="mb-6 px-4 py-1.5 text-sm bg-white/10 text-white border-white/20">
                             <Zap className="w-3.5 h-3.5 mr-1.5 text-yellow-400" />
-                            Turkiye&apos;nin 1 Numarali E-Ticaret Platformu
+                            {"Turkiye'nin 1 Numarali E-Ticaret Platformu"}
                         </Badge>
                     </motion.div>
                     
@@ -376,7 +368,7 @@ export const Hero = () => {
                         transition={{ duration: 0.5, delay: 0.1 }}
                         className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight"
                     >
-                        Turkiye&apos;nin En Buyuk
+                        {"Turkiye'nin En Buyuk"}
                         <br />
                         <span className="text-gradient">Alisveris Merkezi</span>
                     </motion.h1>
@@ -397,7 +389,7 @@ export const Hero = () => {
                         className="mt-8 flex flex-wrap items-center justify-center gap-4"
                     >
                         <Button 
-                            onClick={() => { setActivePage('Shop'); filterCategory('Tumu'); }}
+                            onClick={() => { setActivePage('Shop'); filterCategory('Tümü'); }}
                             size="xl"
                             className="bg-primary hover:bg-primary/90 text-white shadow-glow-primary font-bold"
                         >
